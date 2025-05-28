@@ -11,6 +11,10 @@ public class map {
     private int miss;
 
     public map(current_pp pp) {
+        if (pp == null) {
+            System.err.println("当前 pp 为空，跳过设置");
+        return;
+        }
         this.pp = pp;
     }
 
@@ -21,7 +25,8 @@ public class map {
     public int get_meh() {return meh;}
     public int get_miss() {return miss;}
 
-    public void set_c_pp() {this.c_pp=pp.getCurrent();}
+    public void set_c_pp() {
+        this.c_pp=pp.getCurrent();}
     public void set_f_pp() {this.f_pp=pp.getFc();}
     public void set_geki() {geki=this.geki;}
     public void set_katsu() {katsu=this.katsu;}

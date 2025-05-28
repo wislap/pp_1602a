@@ -20,7 +20,7 @@ public class dis_1602a {
             
             // 获取响应代码
             int responseCode = connection.getResponseCode();
-            System.out.println("Response Code: " + responseCode);
+            //System.out.println("Response Code: " + responseCode);
             
             
         }

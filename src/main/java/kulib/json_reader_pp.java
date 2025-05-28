@@ -7,6 +7,9 @@ public class json_reader_pp {
     Gameplay gameplay=new Gameplay();
     public void reader(String raw_json) throws Exception{
         try {
+            if(raw_json==null)
+                return;
+            
             ObjectMapper mapper = new ObjectMapper();
 
             // 读取 JSON 文件
