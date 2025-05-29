@@ -23,7 +23,8 @@ public class PPWindow extends Application {
 
     private final Label currentPPLabel = new Label("当前 PP：");
     private final Label fullPPLabel = new Label("FC PP：");
-    private final Label missLabel = new Label("Miss 数量：");
+    private final Label hitsLabel = new Label("");
+    private final Label missLabel = new Label("");
 
     private final Label statusLabel = new Label("状态：等待中...");
 
@@ -41,7 +42,7 @@ public class PPWindow extends Application {
         Button settingsButton = new Button("设置");
         settingsButton.setOnAction(e -> openSettingsWindow());
 
-        VBox root = new VBox(10, currentPPLabel, fullPPLabel, missLabel, statusLabel, settingsButton);
+        VBox root = new VBox(10, currentPPLabel, fullPPLabel, hitsLabel, missLabel, statusLabel, settingsButton);
         root.setStyle("-fx-padding: 20; -fx-font-size: 16; -fx-alignment: center;");
 
         Scene scene = new Scene(root, 300, 200);
@@ -116,10 +117,11 @@ public class PPWindow extends Application {
             }
             currentPPLabel.setText("当前 PP：" + String.format("%.2f", currentMap.get_c_pp()));
             fullPPLabel.setText("FC PP：" + String.format("%.2f", currentMap.get_f_pp()));
-            missLabel.setText("300:" + currentMap.get_s300() + 
+            hitsLabel.setText("300:" + currentMap.get_s300() + 
             "  100:" + currentMap.get_s100() + 
-            "  50:" + currentMap.get_s50() + 
-            "  Miss:" + currentMap.get_smiss());
+            "  50:" + currentMap.get_s50());
+
+            missLabel.setText("Miss:" + currentMap.get_smiss() + "  SB:" + currentMap.get_sb());
             statusLabel.setText("状态：更新成功");
         } catch (Exception e) {
             statusLabel.setText("状态：获取失败：" + e.getMessage());

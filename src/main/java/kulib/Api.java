@@ -8,7 +8,7 @@ import java.net.*;
 public class Api {
     public static String raw_json;
     private static long lastSendTime = 0;
-    private static final long MIN_INTERVAL_MS = 500; // 向1602的最小发送间隔
+    private static final long MIN_INTERVAL_MS = 800; // 向1602的最小发送间隔
 
     public static String get_json() {
         int attempt = 0;

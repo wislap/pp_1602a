@@ -11,6 +11,7 @@ public class Beatmap {
     private int s100;
     private int s50;
     private int smiss;
+    private int sliderBreaks;
 
     public Beatmap(Current_pp pp, Map<String, Object> hits) {
         if (pp == null) {
@@ -30,6 +31,8 @@ public class Beatmap {
             this.s100 = (int) hits.getOrDefault("100", 0);
             this.s50 = (int) hits.getOrDefault("50", 0);
             this.smiss = (int) hits.getOrDefault("0", 0);  // miss 是 key "0"
+            this.sliderBreaks = (int) hits.getOrDefault("sliderBreaks", 0);
+
         }
         else {
             System.err.println("hits 数据为空");
@@ -43,4 +46,5 @@ public class Beatmap {
     public int get_s100() {return s100;}
     public int get_s50() {return s50;}
     public int get_smiss() {return smiss;}
+    public int get_sb() {return sliderBreaks;}
 }

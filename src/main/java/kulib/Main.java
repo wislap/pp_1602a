@@ -1,8 +1,13 @@
 package kulib;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+
 import javafx.application.Application;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnsupportedEncodingException{
+        System.setOut(new PrintStream(System.out, true, "GBK"));
+        System.setErr(new PrintStream(System.err, true, "GBK"));
         Api api = new Api();
 
         // 将获取Map的函数提供给窗口
