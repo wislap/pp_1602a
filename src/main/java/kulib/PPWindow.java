@@ -23,16 +23,22 @@ import java.util.function.Supplier;
 public class PPWindow extends Application {
     // 设置默认值
     private static int refreshIntervalMillis = 250; // 默认250毫秒刷新间隔
-    private static String deviceUrl = "http://192.168.8.125";
+    private static String deviceUrl = "http://192.168.8.125"; // 1602a的IP默认值
+    private static String jsonIp = "http://127.0.0.1:24050"; // 获取Json的IP默认值
 
-    private static Supplier<Beatmap> mapSupplier;  // 外部提供 map 的方法
+    private static Supplier<Info> mapSupplier;  // 外部提供 map 的方法
 
-    // 获取1602a的IP
+    // 1602a的IP Getter
     public static String getDeviceUrl() {
         return deviceUrl;
     }
 
-    public static void setMapSupplier(Supplier<Beatmap> supplier) {
+    // Json的IP Getter
+    public static String getJsonIp() {
+        return jsonIp;
+    }
+
+    public static void setMapSupplier(Supplier<Info> supplier) {
         mapSupplier = supplier;
     }
 
@@ -44,23 +50,39 @@ public class PPWindow extends Application {
 
     private final Label statusLabel = new Label("状态：等待中...");
 
+    //选图区元素
+    private final Label pp95Label = new Label();
+    private final Label pp98Label = new Label();
+    private final Label pp100Label = new Label();
+
     // 错误提示
     private final Label errorHint = new Label("请检查TOSU和OSU是否正常启动");
 
-    private VBox mainContent;    // 主内容区
+    private VBox selectContent;  // 选图内容区
+    private VBox playContent;    // 打图内容区
     private VBox errorContent;   // 错误内容区
 
     @Override
     public void start(Stage stage) {
-        // 主内容
-        mainContent = new VBox(
+        // 选图内容
+        selectContent = new VBox(
+            10,
+            new Label("ACC PP"),
+            pp95Label,
+            pp98Label,
+            pp100Label
+        );
+        selectContent.setStyle("-fx-alignment: center;");
+
+        // 打图内容
+        playContent = new VBox(
             10, 
             currentPPLabel, 
             fullPPLabel, 
             hitsLabel, 
             missLabel
         );
-        mainContent.setStyle("-fx-alignment: center;");
+        playContent.setStyle("-fx-alignment: center;");
 
         // 错误提示
         errorContent = new VBox(
@@ -72,11 +94,11 @@ public class PPWindow extends Application {
         errorContent.setStyle("-fx-alignment: center; -fx-border-color: red; -fx-border-width: 2;");
         errorHint.setStyle("-fx-text-fill: red;");
 
-        // StackPane 覆盖显示两个内容区域
-        StackPane contentPane = new StackPane(mainContent, errorContent);
+        // StackPane 覆盖内容区域
+        StackPane contentPane = new StackPane(selectContent, playContent, errorContent);
 
         // 初始化只显示 mainContent
-        mainContent.setVisible(true);
+        playContent.setVisible(true);
         errorContent.setVisible(false);
 
         Button settingsButton = new Button("设置");
@@ -114,6 +136,7 @@ public class PPWindow extends Application {
         settingsStage.setTitle("设置");
 
         TextField urlField = new TextField(deviceUrl);
+        TextField jsonIpField = new TextField(jsonIp); // 新增的 JSON IP 输入框
         TextField intervalField = new TextField(String.valueOf(refreshIntervalMillis));
 
         Button saveButton = new Button("保存");
@@ -134,6 +157,10 @@ public class PPWindow extends Application {
                 return; // 不关闭窗口，不保存
             }
 
+            // 保存 JSON IP
+            jsonIp = jsonIpField.getText().trim();
+            System.out.println("JSON IP 已保存：" + jsonIp);
+
             // 关闭设置窗口
             settingsStage.close();
         });
@@ -141,6 +168,7 @@ public class PPWindow extends Application {
         VBox settingsLayout = new VBox(
                 10,
                 new Label("1602a地址:"), urlField,
+                new Label("JSON数据地址:"), jsonIpField,
                 new Label("刷新间隔（毫秒）:"), intervalField,
                 saveButton
         );
@@ -161,7 +189,7 @@ public class PPWindow extends Application {
     }
 
     // 从外部获取最新 map,异步获取防止卡死UI
-    private Beatmap currentMap;  // 保存异步获取的 Beatmap
+    private Info currentMap;  // 保存异步获取的Info
     private long lastFailTime = 0; // 上次失败调用时间戳（毫秒）
     private boolean isUpdating = false; // 正在更新标志位
     private void updateBeatmap(){
@@ -171,9 +199,9 @@ public class PPWindow extends Application {
         }
         isUpdating = true; // 标记为正在更新
 
-        Task<Beatmap> task = new Task<>() {
+        Task<Info> task = new Task<>() {
             @Override
-            protected Beatmap call() throws Exception {
+            protected Info call() throws Exception {
                 return mapSupplier.get();
             }
         };
@@ -202,24 +230,46 @@ public class PPWindow extends Application {
                 statusLabel.setText("状态：无数据\n");
                 errorContent.setVisible(true);
                 errorContent.setManaged(true);
-                mainContent.setVisible(false);
-                mainContent.setManaged(false);
+                playContent.setVisible(false);
+                playContent.setManaged(false);
                 return;
             }
 
             // 如果 currentMap 有效，隐藏错误提示
             errorContent.setVisible(false);
             errorContent.setManaged(false);
-            mainContent.setVisible(true);
+            playContent.setVisible(true);
             errorContent.setVisible(false);
-            
-            // 显示信息
-            currentPPLabel.setText("当前 PP:" + String.format("%.2f", currentMap.get_c_pp()));
-            fullPPLabel.setText("FC PP:" + String.format("%.2f", currentMap.get_f_pp()));
-            hitsLabel.setText("300:" + currentMap.get_s300() + 
-            "  100:" + currentMap.get_s100() + 
-            "  50:" + currentMap.get_s50());
-            missLabel.setText("Miss:" + currentMap.get_smiss() + "  SB:" + currentMap.get_sb());
-            statusLabel.setText("");
+
+            int state = currentMap.get_states();
+            //System.out.println(state);
+            if (state == 2 || state == 7) {
+                // 显示打图内容
+                playContent.setVisible(true);
+                playContent.setManaged(true);
+                selectContent.setVisible(false);
+                selectContent.setManaged(false);
+
+                currentPPLabel.setText("当前 PP:" + String.format("%.2f", currentMap.get_c_pp()));
+                fullPPLabel.setText("FC PP:" + String.format("%.2f", currentMap.get_f_pp()));
+                hitsLabel.setText("300:" + currentMap.get_s300() + 
+                "  100:" + currentMap.get_s100() + 
+                "  50:" + currentMap.get_s50());
+                missLabel.setText("Miss:" + currentMap.get_smiss() + "  SB:" + currentMap.get_sb());
+                statusLabel.setText("");
+            }
+            else{
+                // 显示选图内容
+                playContent.setVisible(false);
+                playContent.setManaged(false);
+                selectContent.setVisible(true);
+                selectContent.setManaged(true);
+
+                // 更新 ACC PP 显示
+                pp95Label.setText("95% PP: " + String.format("%.2f", currentMap.getPp95()));
+                pp98Label.setText("98% PP: " + String.format("%.2f", currentMap.getPp98()));
+                pp100Label.setText("100% PP: " + String.format("%.2f", currentMap.getPp100()));
+                return; // 提前返回，不执行打图内容
+            }
     }
 }

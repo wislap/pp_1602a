@@ -8,8 +8,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Gameplay {
     public Current_pp pp;
     public Map<String, Object> hits;
-    private int missCount;
+    private Map<String, Double> menuPP;
+    private int states;
 
+    // PP类
     public Current_pp getpp(){
         return pp;
     }
@@ -17,6 +19,7 @@ public class Gameplay {
         this.pp=pp;
     }
 
+    // Hits类
     public Map<String, Object> getHits() {
         return hits;
     }
@@ -24,10 +27,20 @@ public class Gameplay {
         this.hits = hits;
     }
 
-    public int getMissCount() {
-        return missCount;
+    // ACC PP类
+    public void setMenuPP(Map<String, Double> menuPP) {
+        this.menuPP = menuPP;
     }
-    public void setMissCount(int missCount) {
-        this.missCount = missCount;
+    public Map<String, Double> getMenuPP() {
+        return menuPP;
     }
+
+    // 状态标志
+    public void setStates(int states) {
+        this.states = states;
+    }
+    public int getStates() {
+        return states;
+    }
+
 }

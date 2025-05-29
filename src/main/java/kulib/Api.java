@@ -16,7 +16,7 @@ public class Api {
 
         while (true) {
             try {
-                URL url = new URL("http://127.0.0.1:24050/json");
+                URL url = new URL(PPWindow.getJsonIp()+"/json");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
 
@@ -48,10 +48,10 @@ public class Api {
         }
     }
 
-    public Beatmap api_main() throws Exception {
+    public Info api_main() throws Exception {
 
         Dis_1602a dis = new Dis_1602a();
-        Json_reader_pp current_play = new Json_reader_pp();
+        Json_reader current_play = new Json_reader();
 
         String json = get_json();
 
@@ -68,7 +68,12 @@ public class Api {
         }
 
         try {
-            Beatmap this_map = new Beatmap(current_play.gameplay.getpp(),current_play.gameplay.getHits());
+            Info this_map = new Info(
+                current_play.gameplay.getpp(),
+                current_play.gameplay.getHits(),
+                current_play.gameplay.getMenuPP(),
+                current_play.gameplay.getStates()
+            );
 
             //单独线程发送给1602a防止卡死窗口
             long now = System.currentTimeMillis();
