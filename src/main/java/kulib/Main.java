@@ -6,14 +6,16 @@ import javafx.application.Application;
 
 public class Main {
     public static void main(String[] args) throws UnsupportedEncodingException{
+        // 设置控制台为GBK编码
         System.setOut(new PrintStream(System.out, true, "GBK"));
         System.setErr(new PrintStream(System.err, true, "GBK"));
-        Api api = new Api();
+        
+        Api api = new Api();    // 创建API对象
 
         // 将获取Map的函数提供给窗口
         PPWindow.setMapSupplier(() -> {
             try {
-                return api.api_main(); // 每次调用重新抓取并构造Map
+                return api.api_main();      // 每次调用重新抓取并构造Map
             } catch (Exception e) {
                 return null;
             }

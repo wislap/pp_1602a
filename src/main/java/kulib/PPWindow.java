@@ -1,11 +1,17 @@
 package kulib;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.animation.KeyFrame;
@@ -21,14 +27,7 @@ public class PPWindow extends Application {
 
     private static Supplier<Beatmap> mapSupplier;  // 外部提供 map 的方法
 
-    private final Label currentPPLabel = new Label("当前 PP：");
-    private final Label fullPPLabel = new Label("FC PP：");
-    private final Label hitsLabel = new Label("");
-    private final Label missLabel = new Label("");
-
-    private final Label statusLabel = new Label("状态：等待中...");
-
-    // Getter
+    // 获取1602a的IP
     public static String getDeviceUrl() {
         return deviceUrl;
     }
@@ -37,15 +36,65 @@ public class PPWindow extends Application {
         mapSupplier = supplier;
     }
 
+    // 默认元素
+    private final Label currentPPLabel = new Label("");
+    private final Label fullPPLabel = new Label("");
+    private final Label hitsLabel = new Label("");
+    private final Label missLabel = new Label("");
+
+    private final Label statusLabel = new Label("状态：等待中...");
+
+    // 错误提示
+    private final Label errorHint = new Label("请检查TOSU和OSU是否正常启动");
+
+    private VBox mainContent;    // 主内容区
+    private VBox errorContent;   // 错误内容区
+
     @Override
     public void start(Stage stage) {
+        // 主内容
+        mainContent = new VBox(
+            10, 
+            currentPPLabel, 
+            fullPPLabel, 
+            hitsLabel, 
+            missLabel
+        );
+        mainContent.setStyle("-fx-alignment: center;");
+
+        // 错误提示
+        errorContent = new VBox(
+            10, 
+            statusLabel, 
+            errorHint
+        );
+        //errorContent.setStyle("-fx-alignment: center;");
+        errorContent.setStyle("-fx-alignment: center; -fx-border-color: red; -fx-border-width: 2;");
+        errorHint.setStyle("-fx-text-fill: red;");
+
+        // StackPane 覆盖显示两个内容区域
+        StackPane contentPane = new StackPane(mainContent, errorContent);
+
+        // 初始化只显示 mainContent
+        mainContent.setVisible(true);
+        errorContent.setVisible(false);
+
         Button settingsButton = new Button("设置");
         settingsButton.setOnAction(e -> openSettingsWindow());
+        // 按钮用布局Vbox
+        VBox buttonBox = new VBox(settingsButton);
+        buttonBox.setAlignment(Pos.CENTER);
+        buttonBox.setPadding(new Insets(10));
 
-        VBox root = new VBox(10, currentPPLabel, fullPPLabel, hitsLabel, missLabel, statusLabel, settingsButton);
+        // root视图
+        BorderPane root = new BorderPane();
         root.setStyle("-fx-padding: 20; -fx-font-size: 16; -fx-alignment: center;");
+        // 内容居中显示
+        root.setCenter(contentPane);
+        settingsButton.setStyle("-fx-alignment: center;");
+        root.setBottom(buttonBox);
 
-        Scene scene = new Scene(root, 300, 200);
+        Scene scene = new Scene(root, 330, 220);
         stage.setTitle("PP 显示窗口");
         stage.setScene(scene);
         stage.show();
@@ -53,6 +102,8 @@ public class PPWindow extends Application {
         // 设置关闭事件
         stage.setOnCloseRequest(event -> {
             Dis_1602a.display_costom("Disconnected");
+            Platform.exit();
+            System.exit(0);
         });
 
         startUpdater();
@@ -99,6 +150,7 @@ public class PPWindow extends Application {
         settingsStage.show();
     }
 
+    //设置定时刷新窗体
     private void startUpdater() {
         Timeline timeline = new Timeline(
                 // 默认每0.25秒刷新一次
@@ -108,23 +160,66 @@ public class PPWindow extends Application {
         timeline.play();
     }
 
+    // 从外部获取最新 map,异步获取防止卡死UI
+    private Beatmap currentMap;  // 保存异步获取的 Beatmap
+    private long lastFailTime = 0; // 上次失败调用时间戳（毫秒）
+    private boolean isUpdating = false; // 正在更新标志位
+    private void updateBeatmap(){
+        long now = System.currentTimeMillis();
+        if (isUpdating || now - lastFailTime < 2000) { // 若获取失败进入2000ms冷却时间
+            return;
+        }
+        isUpdating = true; // 标记为正在更新
+
+        Task<Beatmap> task = new Task<>() {
+            @Override
+            protected Beatmap call() throws Exception {
+                return mapSupplier.get();
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            currentMap = task.getValue(); // 保存获取的 beatmap
+            isUpdating = false; // 标记为已完成
+            updateDisplay(); // 立即刷新 UI
+        });
+
+        task.setOnFailed(e -> {
+            Throwable ex = task.getException();
+            statusLabel.setText("状态：获取失败：" + (ex != null ? ex.getMessage() : "未知错误"));
+            lastFailTime = System.currentTimeMillis();  // 设置冷却时间起点
+            isUpdating = false; // 标记为已完成
+            ex.printStackTrace();
+        });
+
+        new Thread(task).start();
+    }
+
+    // 更新窗体显示数据
     private void updateDisplay() {
-        try {
-            Beatmap currentMap = mapSupplier.get();  // 从外部获取最新 map
+            updateBeatmap();
             if (currentMap == null) {
-                statusLabel.setText("状态：无数据");
+                statusLabel.setText("状态：无数据\n");
+                errorContent.setVisible(true);
+                errorContent.setManaged(true);
+                mainContent.setVisible(false);
+                mainContent.setManaged(false);
                 return;
             }
-            currentPPLabel.setText("当前 PP：" + String.format("%.2f", currentMap.get_c_pp()));
-            fullPPLabel.setText("FC PP：" + String.format("%.2f", currentMap.get_f_pp()));
+
+            // 如果 currentMap 有效，隐藏错误提示
+            errorContent.setVisible(false);
+            errorContent.setManaged(false);
+            mainContent.setVisible(true);
+            errorContent.setVisible(false);
+            
+            // 显示信息
+            currentPPLabel.setText("当前 PP:" + String.format("%.2f", currentMap.get_c_pp()));
+            fullPPLabel.setText("FC PP:" + String.format("%.2f", currentMap.get_f_pp()));
             hitsLabel.setText("300:" + currentMap.get_s300() + 
             "  100:" + currentMap.get_s100() + 
             "  50:" + currentMap.get_s50());
-
             missLabel.setText("Miss:" + currentMap.get_smiss() + "  SB:" + currentMap.get_sb());
-            statusLabel.setText("状态：更新成功");
-        } catch (Exception e) {
-            statusLabel.setText("状态：获取失败：" + e.getMessage());
-        }
+            statusLabel.setText("");
     }
 }

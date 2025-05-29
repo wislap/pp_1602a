@@ -55,11 +55,6 @@ public class Api {
 
         String json = get_json();
 
-        if (json == null || json.isEmpty()) {
-            System.out.println("未获取到 JSON，跳过本轮处理");
-            return null;
-        }
-
         try {
             current_play.reader(json);
         } catch (Exception e) {
@@ -68,7 +63,7 @@ public class Api {
         }
 
         if (current_play.gameplay == null || current_play.gameplay.getpp() == null) {
-            System.out.println("pp 数据为 null，跳过");
+            System.out.println("pp 数据为 null,跳过");
             return null;
         }
 

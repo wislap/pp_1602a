@@ -24,8 +24,7 @@ public class Beatmap {
         this.current_pp = pp.getCurrent();
         this.fc_pp = pp.getFc();
 
-        // 设置命中统计（注意根据 JSON 键设定）
-        
+        // 设置命中统计
         if (hits != null) {
             this.s300 = (int) hits.getOrDefault("300", 0);
             this.s100 = (int) hits.getOrDefault("100", 0);
