@@ -1,19 +1,20 @@
 package kulib;
+import javafx.application.Application;
 
 public class Main {
     public static void main(String[] args) {
-        api main_prosess = new api();
-    while (true) {
-        try {
-            main_prosess.api_main();
-        } catch (Exception e) {
-            System.err.println("异常捕获：程序继续运行 -> " + e.getMessage());
-            try {
-                Thread.sleep(3000); // 等待几秒再试
-            } 
-            catch (InterruptedException ignored) {}
-        }
-    }
-}
+        Api api = new Api();
 
+        // 将获取Map的函数提供给窗口
+        PPWindow.setMapSupplier(() -> {
+            try {
+                return api.api_main(); // 每次调用重新抓取并构造Map
+            } catch (Exception e) {
+                return null;
+            }
+        });
+
+        // 启动 JavaFX 窗口
+        Application.launch(PPWindow.class);
+    }
 }

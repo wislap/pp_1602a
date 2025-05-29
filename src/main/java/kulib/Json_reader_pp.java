@@ -1,9 +1,8 @@
 package kulib;
-import java.io.File;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class json_reader_pp {
+public class Json_reader_pp {
     Gameplay gameplay=new Gameplay();
     public void reader(String raw_json) throws Exception{
         try {
@@ -16,7 +15,7 @@ public class json_reader_pp {
             OsuStatus status = mapper.readValue(raw_json, OsuStatus.class);
 
             // 获取 PP 对象
-            current_pp pp = status.gameplay.pp;
+            Current_pp pp = status.gameplay.pp;
 
             // System.out.println("Current PP: " + pp.current);
             // System.out.println("FC PP: " + pp.fc);
