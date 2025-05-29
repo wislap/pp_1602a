@@ -7,6 +7,8 @@ import java.net.*;
 
 public class Api {
     public static String raw_json;
+    private static long lastSendTime = 0;
+    private static final long MIN_INTERVAL_MS = 500; // 向1602的最小发送间隔
 
     public static String get_json() {
         int attempt = 0;
@@ -46,7 +48,7 @@ public class Api {
         }
     }
 
-    public Map api_main() throws Exception {
+    public Beatmap api_main() throws Exception {
 
         Dis_1602a dis = new Dis_1602a();
         Json_reader_pp current_play = new Json_reader_pp();
@@ -71,12 +73,14 @@ public class Api {
         }
 
         try {
-            Map this_map = new Map(current_play.gameplay.getpp());
-            this_map.set_c_pp();
-            this_map.set_f_pp();
+            Beatmap this_map = new Beatmap(current_play.gameplay.getpp(),current_play.gameplay.getHits());
 
             //单独线程发送给1602a防止卡死窗口
-            new Thread(() -> dis.display_pp(this_map)).start();
+            long now = System.currentTimeMillis();
+            if (now - lastSendTime >= MIN_INTERVAL_MS) {
+                new Thread(() -> dis.display_pp(this_map)).start();
+                lastSendTime = now;
+            }
 
             return this_map;
 

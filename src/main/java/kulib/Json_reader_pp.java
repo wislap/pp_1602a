@@ -1,14 +1,13 @@
 package kulib;
 
+import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Json_reader_pp {
     Gameplay gameplay=new Gameplay();
     public void reader(String raw_json) throws Exception{
+        if(raw_json==null) return;
         try {
-            if(raw_json==null)
-                return;
-            
             ObjectMapper mapper = new ObjectMapper();
 
             // 读取 JSON 文件
@@ -16,12 +15,14 @@ public class Json_reader_pp {
 
             // 获取 PP 对象
             Current_pp pp = status.gameplay.pp;
-
-            // System.out.println("Current PP: " + pp.current);
-            // System.out.println("FC PP: " + pp.fc);
-            // System.out.println("Max This Play PP: " + pp.maxThisPlay);
-
             gameplay.setpp(pp);
+
+            // 获取 hits Map
+            if (status.gameplay != null && status.gameplay.hits != null) {
+                Map<String, Object> hits = status.gameplay.hits;
+                // 这里可以传给 gameplay 或其他类
+                gameplay.setHits(hits);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
