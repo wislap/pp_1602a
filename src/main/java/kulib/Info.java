@@ -56,7 +56,6 @@ public class Info {
         }
         else {
             System.err.println("hits 数据为空");
-            return;
         }
     }
 

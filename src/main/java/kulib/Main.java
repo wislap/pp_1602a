@@ -1,8 +1,9 @@
 package kulib;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 
 import javafx.application.Application;
+
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 
 public class Main {
     public static void main(String[] args) throws UnsupportedEncodingException{
@@ -13,13 +14,9 @@ public class Main {
         Api api = new Api();    // 创建API对象
 
         // 将获取Map的函数提供给窗口
-        PPWindow.setMapSupplier(() -> {
-            try {
-                return api.api_main();      // 每次调用重新抓取并构造Map
-            } catch (Exception e) {
-                return null;
-            }
-        });
+        PPWindow.setDataSupplier(api::fetchGameData);
+        // 添加关闭钩子
+        Runtime.getRuntime().addShutdownHook(new Thread(api::shutdown));
 
         // 启动 JavaFX 窗口
         Application.launch(PPWindow.class);
