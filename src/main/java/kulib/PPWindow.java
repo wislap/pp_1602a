@@ -1,5 +1,7 @@
 package kulib;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -14,8 +16,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.util.Duration;
 
 import java.util.function.Supplier;
@@ -26,7 +26,7 @@ public class PPWindow extends Application {
     private static String deviceUrl = "http://192.168.8.125"; // 1602a的IP默认值
     private static String jsonIp = "http://127.0.0.1:24050"; // 获取Json的IP默认值
 
-    private static Supplier<Info> mapSupplier;  // 外部提供 map 的方法
+    private static Supplier<Info> dataSupplier;  // 外部提供 map 的方法
 
     // 1602a的IP Getter
     public static String getDeviceUrl() {
@@ -38,8 +38,8 @@ public class PPWindow extends Application {
         return jsonIp;
     }
 
-    public static void setMapSupplier(Supplier<Info> supplier) {
-        mapSupplier = supplier;
+    public static void setDataSupplier(Supplier<Info> supplier) {
+        dataSupplier = supplier;
     }
 
     // 默认元素
@@ -201,8 +201,8 @@ public class PPWindow extends Application {
 
         Task<Info> task = new Task<>() {
             @Override
-            protected Info call() throws Exception {
-                return mapSupplier.get();
+            protected Info call() {
+                return dataSupplier.get(); // 使用新的 dataSupplier
             }
         };
 
@@ -217,7 +217,9 @@ public class PPWindow extends Application {
             statusLabel.setText("状态：获取失败：" + (ex != null ? ex.getMessage() : "未知错误"));
             lastFailTime = System.currentTimeMillis();  // 设置冷却时间起点
             isUpdating = false; // 标记为已完成
-            ex.printStackTrace();
+            if (ex != null) {
+                ex.printStackTrace();
+            }
         });
 
         new Thread(task).start();
@@ -269,7 +271,7 @@ public class PPWindow extends Application {
                 pp95Label.setText("95% PP: " + String.format("%.2f", currentMap.getPp95()));
                 pp98Label.setText("98% PP: " + String.format("%.2f", currentMap.getPp98()));
                 pp100Label.setText("100% PP: " + String.format("%.2f", currentMap.getPp100()));
-                return; // 提前返回，不执行打图内容
+                // 提前返回，不执行打图内容
             }
     }
 }
