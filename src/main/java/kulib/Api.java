@@ -86,9 +86,7 @@ public class Api {
             if (now - lastSendTime.get() >= Displayer.MIN_INTERVAL_MS) {
                 //System.out.println("[API] 状态为: " + gameInfo.get_states() + " @ " + gameInfo.hashCode());
                 //System.out.println(now+" "+lastSendTime.get()+"=="+(now - lastSendTime.get()));
-                new Thread(() -> {
-                    Displayer.getInstance().display(gameInfo);
-                }).start();
+                new Thread(() -> Displayer.getInstance().display(gameInfo)).start();
                 lastSendTime.set(now);
             }
             return gameInfo;
