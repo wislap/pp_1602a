@@ -41,7 +41,7 @@ public class Api {
                     conn.disconnect();
                 }
             } catch (IOException e) {
-                System.err.printf("JSON请求失败（尝试 %d/5）: %s%n", attempt + 1, e.getMessage());
+                System.err.printf("JSON请求失败(尝试 %d/5): %s%n", attempt + 1, e.getMessage());
                 try {
                     Thread.sleep(2000); // 重试间隔2秒
                 } catch (InterruptedException ie) {
@@ -50,7 +50,7 @@ public class Api {
                 }
             }
         }
-        System.err.println("达到最大重试次数，无法获取JSON数据");
+        System.err.println("达到最大重试次数,无法获取JSON数据");
         return null;
     }
 
@@ -84,10 +84,12 @@ public class Api {
             // 异步发送到显示器（带速率限制）
             long now = System.currentTimeMillis();
             if (now - lastSendTime.get() >= Displayer.MIN_INTERVAL_MS) {
-                scheduler.execute(() -> {
+                //System.out.println("[API] 状态为: " + gameInfo.get_states() + " @ " + gameInfo.hashCode());
+                //System.out.println(now+" "+lastSendTime.get()+"=="+(now - lastSendTime.get()));
+                new Thread(() -> {
                     Displayer.getInstance().display(gameInfo);
-                    lastSendTime.set(now);
-                });
+                }).start();
+                lastSendTime.set(now);
             }
             return gameInfo;
         } catch (Exception e) {

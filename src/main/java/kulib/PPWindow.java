@@ -143,13 +143,14 @@ public class PPWindow extends Application {
         saveButton.setOnAction(e -> {
             // 从输入框读取文本，赋值给deviceUrl
             deviceUrl = urlField.getText().trim();
-            System.out.println("新地址已保存：" + deviceUrl);
+            System.out.println("1602a地址已保存: " + deviceUrl);
 
             // 保存刷新间隔，转换数字，防止非法输入
             try {
                 int interval = Integer.parseInt(intervalField.getText().trim());
                 if (interval <= 0) throw new NumberFormatException();
                 refreshIntervalMillis = interval;
+                System.out.println("刷新时间已保存: " + refreshIntervalMillis);
             } catch (NumberFormatException ex) {
                 // 弹窗提示错误
                 Alert alert = new Alert(Alert.AlertType.ERROR, "刷新间隔必须是正整数（毫秒）！");
@@ -254,7 +255,8 @@ public class PPWindow extends Application {
 
                 currentPPLabel.setText("当前 PP:" + String.format("%.2f", currentMap.get_c_pp()));
                 fullPPLabel.setText("FC PP:" + String.format("%.2f", currentMap.get_f_pp()));
-                hitsLabel.setText("300:" + currentMap.get_s300() + 
+                hitsLabel.setText(
+                "300:" + currentMap.get_s300() + 
                 "  100:" + currentMap.get_s100() + 
                 "  50:" + currentMap.get_s50());
                 missLabel.setText("Miss:" + currentMap.get_smiss() + "  SB:" + currentMap.get_sb());

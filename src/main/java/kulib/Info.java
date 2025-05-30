@@ -15,6 +15,7 @@ public class Info {
     private float pp_98;
     private float pp_100;
 
+    //打图信息
     private int s300;
     private int s100;
     private int s50;
@@ -37,13 +38,13 @@ public class Info {
         this.current_pp = pp.getCurrent();
         this.fc_pp = pp.getFc();
 
-        // 处理ACC类别PP
+        // 处理ACC PP
         if (menuPP != null) {
             this.pp_95 = menuPP.get("95") != null ? menuPP.get("95").floatValue() : 0f;
             this.pp_98 = menuPP.get("98") != null ? menuPP.get("98").floatValue() : 0f;
             this.pp_100 = menuPP.get("100") != null ? menuPP.get("100").floatValue() : 0f;
         } else {
-            System.err.println("ACC类别PP数据为空");
+            System.err.println("ACC PP数据为空");
         }
 
         // 设置命中统计

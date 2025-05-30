@@ -3,7 +3,7 @@ package kulib;
 import static kulib.Dis_1602a.display_costom;
 
 public class Displayer {
-    public static final long MIN_INTERVAL_MS = 800;
+    public static final long MIN_INTERVAL_MS = 600;
     private static final Displayer INSTANCE = new Displayer();
 
     public static Displayer getInstance() {
@@ -13,6 +13,7 @@ public class Displayer {
     public void display(Info gameInfo) {
         // 原Dis_1602a的显示逻辑
         int states = gameInfo.get_states();
+        //System.out.println("[Displayer] 接收状态为: " + gameInfo.get_states() + " @ " + gameInfo.hashCode());
         if(states==2 || states ==7)
             display_costom(String.format("CUR:%12.1fFC:%13.1f", gameInfo.get_c_pp(), gameInfo.get_f_pp()));
         else{
