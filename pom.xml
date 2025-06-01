@@ -13,8 +13,8 @@
 
     <distributionManagement>
             <repository>
-                    <id>nexus-releases</id>
-                <name>Nexus Release Repository</name>
+                <id>pp_1602a-releases</id>
+                <name>pp_1602a</name>
                 <url>https://github.com/wislap/pp_1602a/releases/</url>
             </repository>
     </distributionManagement>
@@ -118,6 +118,7 @@
              <plugin>
                  <groupId>com.akathist.maven.plugins.launch4j</groupId>
                  <artifactId>launch4j-maven-plugin</artifactId>
+                 <version>2.6.0</version>
                 <executions>
                     <execution>
                     <id>create-exe</id>
