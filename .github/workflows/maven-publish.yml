@@ -44,6 +44,7 @@ jobs:
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
     - name: Extract version from pom.xml
+      id: extract_version
       run: |
         VERSION=$(xmlstarlet sel -t -v '//project/version' pom.xml)
         echo "RELEASE_TAG=$VERSION" >> $GITHUB_ENV
