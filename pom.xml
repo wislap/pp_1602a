@@ -11,6 +11,14 @@
     <version>1.1.1.0</version>
     <packaging>jar</packaging>
 
+    <distributionManagement>
+            <repository>
+                    <id>nexus-releases</id>
+                <name>Nexus Release Repository</name>
+                <url>https://github.com/wislap/pp_1602a/releases/</url>
+            </repository>
+    </distributionManagement>
+
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
