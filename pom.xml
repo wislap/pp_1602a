@@ -136,7 +136,7 @@
                         </jre>
                         <versionInfo>
                             <fileVersion>${version}</fileVersion>
-                            <productVersion>${version}</productVersion>
+                            <productVersion>1.1.1.0</productVersion>
                             <txtFileVersion>pp_1602a_exe</txtFileVersion>
                         </versionInfo>
                     </configuration>
