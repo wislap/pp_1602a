@@ -17,11 +17,21 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    env:
+      GIT_COMMIT_SHORT: ${{ github.sha | truncate(7, true) }} # 提交ID前7位
+      BUILD_NUM: ${{ github.run_number }} # 自动增量构建号
+      RELEASE_TAG: ${{ github.ref_name }} # 获取标签名称
+      
     permissions:
       contents: read
       packages: write
 
     steps:
+    - name: Set additional envs
+      run: |
+          echo "BUILD_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+          echo "RUN_ID=$GITHUB_RUN_ID" >> $GITHUB_ENV
+          
     - uses: actions/checkout@v4
     - name: Set up JDK 17 for x64
       uses: actions/setup-java@v4
@@ -38,7 +48,9 @@ jobs:
       run: echo "done!"
 
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: |
+        mvn -B package --file pom.xml \
+         -Dci.releaseTag=${{ env.RELEASE_TAG }} 
 
     - run: mkdir staging && cp target/*.jar staging
 
@@ -46,3 +58,4 @@ jobs:
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
       #env:
         #GITHUB_TOKEN: ${{ github.token }}
+    
