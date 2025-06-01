@@ -128,7 +128,7 @@
                         <downloadUrl>https://sourceforge.net/projects/launch4j/files/launch4j-3/3.14/launch4j-3.14-win32.zip</downloadUrl>
                         <jre>
                             <minVersion>17</minVersion>
-                            <maxVersion>17</maxVersion>
+                            <maxVersion>21</maxVersion>
                             <initialHeapSize>256</initialHeapSize>
                             <maxHeapSize>1024</maxHeapSize>
                         </jre>
