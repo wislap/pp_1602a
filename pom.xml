@@ -135,9 +135,9 @@
                             <path>./jre</path>
                         </jre>
                         <versionInfo>
-                            <fileVersion>${project.version}</fileVersion>
-                            <productVersion>${project.version}</productVersion>
-                            <txtFileVersion>${project.name}</txtFileVersion>
+                            <fileVersion>${ci.releaseTag}</fileVersion>
+                            <productVersion>${ci.releaseTag}</productVersion>
+                            <txtFileVersion>pp_1602a_exe</txtFileVersion>
                         </versionInfo>
                     </configuration>
                 </execution>
