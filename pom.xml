@@ -106,6 +106,7 @@
                 </executions>
             </plugin>
                  
+            #launch4j          
              <plugin>
                      <groupId>com.akathist.maven.plugins.launch4j</groupId>
                      <artifactId>launch4j-plugin</artifactId>
@@ -125,6 +126,7 @@
                         <classPath>
                             <mainClass>kulib.Main</mainClass> <!-- 替换您的入口类 -->
                         </classPath>
+                        <downloadUrl>https://sourceforge.net/projects/launch4j/files/launch4j-3/3.14/launch4j-3.14-win32.zip</downloadUrl>
                         <jre>
                             <minVersion>17</minVersion>
                             <maxVersion>17</maxVersion>
