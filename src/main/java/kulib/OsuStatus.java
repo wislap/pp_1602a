@@ -22,4 +22,3 @@ public class OsuStatus {
         public int getState() { return state; }
     }
 }
-//233
