@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Api {
-
     // 线程池管理异步任务
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
     private final AtomicLong lastSendTime = new AtomicLong(0); // 线程安全的时间戳
