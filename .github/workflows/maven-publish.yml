@@ -18,32 +18,18 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      RELEASE_TAG: "" # 获取标签名称
+      RELEASE_TAG: "1.1.1" # 获取标签名称
       
     permissions:
       contents: read
       packages: write
 
     steps:
-    - name: Install xmlstarlet
-      run: sudo apt-get install -y xmlstarlet
-
     - name: Set additional envs
       run: |
           echo "BUILD_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
           echo "RUN_ID=$GITHUB_RUN_ID" >> $GITHUB_ENV
 
-    - name: Extract version from pom.xml
-      run: |
-        VERSION=$(xmlstarlet sel -t -v '//project/version' pom.xml)
-        echo "RELEASE_TAG=$VERSION" >> $GITHUB_ENV
-        echo "Extracted version: $VERSION"
-        shell: /usr/bin/bash -e
-
-    - name: Set additional envs
-      run: |
-        echo "BUILD_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
-        echo "RUN_ID=$GITHUB_RUN_ID" >> $GITHUB_ENV
     - uses: actions/checkout@v4
     - name: Set up JDK 17 for x64
       uses: actions/setup-java@v4
