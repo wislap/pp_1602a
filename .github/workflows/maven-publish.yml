@@ -5,7 +5,7 @@ name: Maven Package
 
 on:
   release:
-    types: [created]
+    types: [创建]
   push:
     branches:
       - master  # 当推送到 master 分支时触发
@@ -44,5 +44,5 @@ jobs:
 
     - name: Publish to GitHub Packages Apache Maven
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
+      #env:
+        #GITHUB_TOKEN: ${{ github.token }}
