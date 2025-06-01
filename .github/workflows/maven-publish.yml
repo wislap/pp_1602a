@@ -5,7 +5,7 @@ name: Maven Package
 
 on:
   release:
-    types: [创建]
+    types: [created]
   push:
     branches:
       - master  # 当推送到 master 分支时触发
@@ -18,13 +18,16 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      RELEASE_TAG: ${{ github.ref_name }} # 获取标签名称
+      RELEASE_TAG: "" # 获取标签名称
       
     permissions:
       contents: read
       packages: write
 
     steps:
+    - name: Install xmlstarlet
+      run: sudo apt-get install -y xmlstarlet
+
     - name: Set additional envs
       run: |
           echo "BUILD_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
@@ -39,6 +42,17 @@ jobs:
         architecture: x64
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
+
+    - name: Extract version from pom.xml
+      run: |
+        VERSION=$(xmlstarlet sel -t -v '//project/version' pom.xml)
+        echo "RELEASE_TAG=$VERSION" >> $GITHUB_ENV
+        echo "Extracted version: $VERSION"
+
+    - name: Set additional envs
+      run: |
+        echo "BUILD_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+        echo "RUN_ID=$GITHUB_RUN_ID" >> $GITHUB_ENV
 
     - name: Set Release version env
       run: echo "RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
