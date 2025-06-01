@@ -129,8 +129,8 @@
                         <jre>
                             <minVersion>17</minVersion>
                             <maxVersion>17</maxVersion>
-                            <initialMemorySize>256</initialMemorySize>
-                            <maxMemorySize>1024</maxMemorySize>
+                            <initialHeapSize>256</initialHeapSize>
+                            <maxHeapSize>1024</maxHeapSize>
                         </jre>
                         <versionInfo>
                             <fileVersion>${project.version}</fileVersion>
