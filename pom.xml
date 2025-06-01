@@ -105,13 +105,13 @@
                     </execution>
                 </executions>
             </plugin>
-                          
+
+            <!-- launch4j 插件 -->
              <plugin>
-                     <groupId>com.akathist.maven.plugins.launch4j</groupId>
-                     <artifactId>launch4j-plugin</artifactId>
-                     <version>2.5.2</version> <!-- 最新版本 -->
-            <executions>
-                <execution>
+                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                 <artifactId>launch4j-maven-plugin</artifactId>
+                <executions>
+                    <execution>
                     <id>create-exe</id>
                     <phase>package</phase> <!-- 绑定到package阶段 -->
                     <goals>

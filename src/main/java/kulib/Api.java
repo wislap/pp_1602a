@@ -14,7 +14,6 @@ public class Api {
     // 线程池管理异步任务
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
     private final AtomicLong lastSendTime = new AtomicLong(0); // 线程安全的时间戳
-
     // 单例模式确保API实例唯一
     private static final Api INSTANCE = new Api();
     public static Api getInstance() {
