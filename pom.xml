@@ -8,7 +8,7 @@
     <!-- 项目坐标 -->
     <groupId>kulib</groupId>
     <artifactId>pp_1602a</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.1.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -136,7 +136,7 @@
                         </jre>
                         <versionInfo>
                             <fileVersion>${version}</fileVersion>
-                            <productVersion>1.1.1.0</productVersion>
+                            <productVersion>${version}</productVersion>
                             <txtFileVersion>pp_1602a_exe</txtFileVersion>
                         </versionInfo>
                     </configuration>
