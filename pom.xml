@@ -106,7 +106,7 @@
                 </executions>
             </plugin>
                  
-            #launch4j          
+            <!-- launch4j -->          
              <plugin>
                      <groupId>com.akathist.maven.plugins.launch4j</groupId>
                      <artifactId>launch4j-plugin</artifactId>
